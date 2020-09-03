@@ -1,0 +1,97 @@
+from tkinter import *
+pip install pygame
+
+import pygame
+from pygame import mixer
+from tkinter import Tk
+from tkinter import Label
+from tkinter import Button
+from tkinter import filedialog
+
+
+current_volume = 0.5 
+
+def play_song():
+    filename=filedialog.askopenfilename(initialdir = 'C:/',title='PLEASE SELECT A FILE')    # you can choose another location for default purpose C:/ has been selected
+    current_song = filename
+    song_title = filename.split('/')
+    song_title = song_title[-1]
+    try:
+        mixer.init()
+        mixer.music.load(current_song)
+        mixer.music.set_volume(current_volume)
+        mixer.music.play()
+        song_title_label.config(fg='green',text='NOW PLAYING :'+str(song_title)) 
+        volume_label.config(fg='green',text='VOLUME:'+str (current_volume)) 
+    except Exception as e:
+            print (e)
+            song_title_label.config(fg='red',text='ERROR PLAYING TRACK')
+def reduce_volume():
+    try:
+        global current_volume
+        if current_volume <=0:
+           volume_label.config(fg='red',text='VOLUME MUTED')
+           return
+        current_volume = current_volume-float(0.1)
+        current_volume = round(current_volume,1)
+        mixer.music.set_volume(current_volume)
+        volume_label.config(fg='green',text='VOLUME:'+str(current_volume))
+    except Exception as e:
+           print (e)
+           song_title_label.config(fg='red',text='TRACK IS NOT SELECTED YET')
+
+def increase_volume():
+    try:
+        global current_volume
+        if current_volume >=1:
+           volume_label.config(fg='green',text='VOLUME MAX')
+           return
+        current_volume = current_volume+float(0.1)
+        current_volume = round(current_volume,1)
+        mixer.music.set_volume(current_volume)
+        volume_label.config(fg='green',text='VOLUME:'+str(current_volume))
+    except Exception as e:
+           print (e)
+           song_title_label.config(fg='red',text='TRACK IS NOT SELECTED YET')
+                    
+def pause():
+    try:
+       mixer.music.pause()                     
+    except Exception as e:
+           print (e)                 
+           song_title_label.config(fg='red',text='TRACK IS NOT SELECTED YET')
+                            
+def resume():
+    try:
+       mixer.music.unpause()
+    except Exception as e:                        
+           print (e)
+           song_title_label.config(fg='red',text='TRACK IS NOT SELECTED') 
+
+        
+        
+# main screen :
+
+master = Tk()
+
+master.title('MUSIC PLAYER')
+
+# labels:
+
+Label(master,text='CUSTOM MUSIC PLAYER',font = ('calibri',15),fg = 'red').grid(sticky = 'N',row = 0,padx=120)
+song_title_label = Label(master,font=('calibri',12))
+Label(master,text = 'PLEASE SELECT A MUSIC TRACK',font = ('calibri',12),fg='black').grid(sticky='N',row = 1)
+Label(master,text = 'VOLUME',font=('calibri',12),fg='red').grid(sticky='N',row = 4)
+song_title_label.grid(sticky='N',row = 3)
+volume_label = Label(master,font=('calibri',12))
+volume_label.grid(sticky='N',row=5)
+
+
+#buttons:
+Button(master,text='SELECT SONG',font=('calibri',12),command=play_song).grid(sticky='N',row = 2)
+Button(master,text='PAUSE',font=('calibri',12),command=pause).grid(sticky='E',row=3)
+Button(master,text='RESUME',font=('caliber',12),command=resume).grid(row=3,sticky='W')
+Button(master,text='+',font=('calibri',12),width=5,command=increase_volume).grid(sticky='E',row=5)
+Button(master,text='-',font=('calibri',12),width=5,command=reduce_volume).grid(sticky='W',row=5)  
+
+master.mainloop()
